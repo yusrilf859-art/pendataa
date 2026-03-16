@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Proyek Penambangan Data - WKNN & Normalisasi</title>
+
+<style>
+body{
+font-family: Arial;
+background:#f4f4f4;
+margin:40px;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+}
+
+h1{
+color:#333;
+}
+
+table{
+border-collapse:collapse;
+margin-top:10px;
+}
+
+td,th{
+border:1px solid black;
+padding:8px;
+}
+
+code{
+background:#eee;
+padding:10px;
+display:block;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Tugas Penambangan Data</h1>
+
+<h2>1. Missing Values Imputation dengan WKNN</h2>
+
+<p>
+Missing value adalah data yang hilang dalam dataset.
+Salah satu metode untuk mengatasinya adalah Weighted K-Nearest Neighbor (WKNN).
+Metode ini mencari data terdekat lalu menghitung nilai pengganti menggunakan bobot jarak.
+</p>
+
+<h3>Contoh Dataset</h3>
+
+<table>
+
+<tr>
+<th>Tinggi</th>
+<th>Berat</th>
+</tr>
+
+<tr>
+<td>170</td>
+<td>65</td>
+</tr>
+
+<tr>
+<td>165</td>
+<td>60</td>
+</tr>
+
+<tr>
+<td>180</td>
+<td>?</td>
+</tr>
+
+<tr>
+<td>175</td>
+<td>70</td>
+</tr>
+
+</table>
+
+<h3>Langkah Perhitungan WKNN</h3>
+
+<p>1. Hitung jarak</p>
+
+<p>d = |180 - tinggi|</p>
+
+<ul>
+<li>170 → 10</li>
+<li>165 → 15</li>
+<li>175 → 5</li>
+</ul>
+
+<p>2. Hitung bobot</p>
+
+<p>w = 1 / d</p>
+
+<ul>
+<li>0.1</li>
+<li>0.066</li>
+<li>0.2</li>
+</ul>
+
+<p>3. Hitung nilai imputasi</p>
+
+<p>Berat ≈ 66.8 kg</p>
+
+<p>jadi data yang hilang = 66.8kg </p>
+
+<h3>Code Python WKNN</h3>
+    <img src="Screenshot 2026-03-16 162534.png" width="800">
+
+<p>penjelasan:
+<h3>1.import library</h3>
+<code>
+    import numpy as np
+from sklearn.impute import KNNImputer
+</code>
+import numpy as np
+Mengimpor library NumPy untuk membuat dan mengolah array data numerik.
+
+from sklearn.impute import KNNImputer
+Mengimpor KNNImputer, yaitu metode untuk mengisi nilai yang kosong (NaN) menggunakan algoritma K-Nearest Neighbors (KNN).
+<h3>2.membuat data</h3>
+<code>
+    data = np.array([
+[170,65],
+[165,60],
+[180,np.nan],
+[175,70]
+])
+</code>
+data dibuat array 2 dimensi 
+<table>
+
+<tr>
+<th>Tinggi</th>
+<th>Berat</th>
+</tr>
+
+<tr>
+<td>170</td>
+<td>65</td>
+</tr>
+
+<tr>
+<td>165</td>
+<td>60</td>
+</tr>
+
+<tr>
+<td>180</td>
+<td>NAN</td>
+</tr>
+
+<tr>
+<td>175</td>
+<td>70</td>
+</tr>
+
+</table>
+np.nan artinya data hilang / kosong.
+Pada data ketiga, berat badan tidak diketahui.
+
+<h3>3.membuat objek KNNimputer</h3>
+<code>
+    imputer = KNNImputer(n_neighbors=3, weights="distance")
+</code>
+penjelasan :
+Parameter yang digunakan:
+
+n_neighbors = 3
+Artinya algoritma akan melihat 3 data terdekat untuk memperkirakan nilai yang hilang.
+
+weights = "distance"
+Data yang lebih dekat jaraknya akan memiliki pengaruh lebih besar dalam menghitung nilai pengganti.
+
+<h3>4.mengisi data yang hilang </h3>
+<code>
+    hasil = imputer.fit_transform(data)
+</code>
+penjelasan
+t_transform() melakukan dua hal:
+
+Mempelajari pola data
+
+Mengisi nilai yang kosong
+
+Nilai NaN pada berat badan akan diperkirakan dari 3 data yang paling mirip.
+</p>
+
+<h2>2. Normalisasi Data</h2>
+
+<p>
+Normalisasi data adalah proses mengubah nilai data
+ke skala tertentu agar perbedaan antar fitur tidak terlalu besar.
+</p>
+
+<h3>Jenis Normalisasi</h3>
+
+<ul>
+<h2>1.Min-Max Normalization</h2>
+<p>rumus</p>
+<code>(x - min) / (max - min)</code>
+<p>contoh data</p>
+<code>150, 160, 170, 180</code>
+<p> min=150 <br>
+    max=180
+</p>
+<p>normalisai untuk 170</p>
+<code>(170-150)/(180-150)<br>
+    = 20/30<br>
+    = 0.67</code>
+<h2>Z-Score Normalization</h2>
+<p>rumus</p>
+<code>z = (x - mean) / std</code>
+<p>contoh: <br>
+    mean=165 <br>
+    std=10
+</p>
+<code>(170 - 165) / 10 = 0.5</code>
+
+
+<h2>Decimal Scaling</h2>
+<p>rumus</p>
+<code>x / 10^j</code>
+<p>contoh</p>
+<code>987 → 0.987</code>
+</ul>
+
+<h1>code normalisasi data min-max </h1>
+<img src="normalisasidata.png" width="800">
+<p>Penjelasan
+<h3>import library</h3>
+<code>from sklearn.preprocessing import MinMaxScaler
+    import numpy as np</code>
+<h4>penjelasan:<br>
+    - MinMaxScaler
+Digunakan untuk melakukan normalisasi data ke rentang 0 sampai 1.
+<br>
+- numpy (np)
+Digunakan untuk membuat dan mengolah array data numerik.
+</h4>
+<h3>membuat data</h3>
+<code>data = np.array([[150],[160],[170],[180]])</code>
+<h4>penjelasan:
+    Penjelasan:
+Data dibuat dalam bentuk array 2 dimensi.<br>
+Dataset yang digunakan:
+ Data
+150
+160
+170
+180
+</h4>
+<h3>membuat objek normalisasi</h3>
+<code>scaler = MinMaxScaler()</code>
+<h4>penjelasan <br> 
+    Membuat objek MinMaxScaler yang akan digunakan untuk melakukan proses normalisasi data.</h4>
+<h3>proses normalisasi</h3>
+<code>hasil = scaler.fit_transform(data)</code>
+<h4>penjelasan <br>
+    Fungsi fit_transform() melakukan dua proses:
+    
+    fit → mencari nilai minimum dan maksimum dari data
+    
+    transform → mengubah data menggunakan rumus normalisasi <br>
+    
+    Rumus Min-Max Normalization: <br>
+    
+    (
+    𝑥
+    −
+    𝑚
+    𝑖
+    𝑛
+    )
+    /
+    (
+    𝑚
+    𝑎
+    𝑥
+    −
+    𝑚
+    𝑖
+    𝑛
+    )
+    (x−min)/(max−min)</h4>
+    
+<h2>code normalisasi z score</h2>
+<img src="Screenshot 2026-03-16 182826.png" width="800">
+<h4>membuat objek normalisasi</h4>
+<code>scaler = StandardScaler()</code>
+penjelasan <br>
+Digunakan untuk melakukan normalisasi Z-Score.
+<h4>proses normalisasi</h4>
+<code>hasil = scaler.fit_transform(data)</code>
+penjelasan <br>
+Menggunakan rumus Z-Score:<br>
+
+𝑧
+=
+(
+𝑥
+−
+𝑚
+𝑒
+𝑎
+𝑛
+)
+/
+𝑠
+𝑡
+𝑑
+z=(x−mean)/std <br>
+
+Keterangan: <br>
+
+x = nilai data<br>
+
+mean = rata-rata<br>
+
+std = standar deviasi<br>
+   
+
+ <h2>decimal scaling</h2>
+ <img src="Screenshot 2026-03-16 184131.png" width="800">
+ <h3>mencari nilai terbsear</h3>
+ <code>max_value = np.max(np.abs(data))</code>
+ penjelasan: <br>
+ Digunakan untuk mencari nilai terbesar dalam dataset.
+ <h3>menemukan nilai j</h3>
+ <code>j = len(str(max_value))</code>
+ karena: <br>
+ (180 -> 3 digit)<br>
+ maka:<br>
+ (j adalah 3)<br>
+ <h3>proses normalisasi/h3>
+<code>hasil = data / (10**j)</code>
+Rumus Decimal Scaling:<br>
+
+𝑥
+′
+=
+𝑥
+10
+𝑗
+x
+′
+=
+10
+j
+x
+	​
+<br>
+<table>
+
+    <tr>
+    <th>Data</th>
+    <th>Perhitungan</th>
+    <th>Hasil</th>
+    </tr>
+    
+    <tr>
+    <td>150</td>
+    <td>150 / 1000</td>
+    <td>0.15</td>
+    </tr>
+    
+    <tr>
+    <td>160</td>
+    <td>160 / 1000</td>
+    <td>0.16</td>
+    </tr>
+    
+    <tr>
+    <td>170</td>
+    <td>170 / 1000</td>
+    <td>0.17</td>
+    </tr>
+    
+    <tr>
+    <td>180</td>
+    <td>180 / 1000</td>
+    <td>0.18</td>
+    </tr>
+    
+    </table>
+
+</p>
+</div>
+
+</body>
+</html>
